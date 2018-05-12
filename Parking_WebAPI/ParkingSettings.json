@@ -1,0 +1,11 @@
+{
+  "timeout": 3,
+  "parkingPlace": 20,
+  "fine": 0.3,
+  "prices": {
+  	"Passenger": 3,
+    "Truck": 5,
+    "Bus": 2,
+    "Motorcycle": 1
+  }
+}
