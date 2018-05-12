@@ -5,14 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Cars.xml" />
     <None Remove="Transactions.log" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Cars.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Transactions.log" />
   </ItemGroup>
 

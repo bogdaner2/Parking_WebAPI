@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Parking.Data;
 
 namespace Parking_WebAPI.Controllers
 {
@@ -7,6 +12,11 @@ namespace Parking_WebAPI.Controllers
     {
         private readonly Parking.Data.Parking parking = Parking.Data.Parking.Instance;
         // GET: api/parking/Index
+        public ParkingController()
+        {
+
+        }
+
         public string Info()
         {
             return "Select an action and enter its number:\n" +
@@ -20,11 +30,43 @@ namespace Parking_WebAPI.Controllers
                    "8)Show cars\n" +
                    "9)Exit";
         }
+        [HttpGet("api/parking/[action]",Name = "GetFreeSpots")]
         public string GetFreeSpots()
         {
             return "Free spots "+ parking.Settings.ParkingPlace;
         }
 
+        [HttpGet]
+        public string ShowBalance()
+        {
+            return JsonConvert.SerializeObject(parking.Balance);
+        }
 
+        [HttpGet]
+        public int AmountOfoccupiedSpots()
+        {
+            return 0;
+        }
+
+        [HttpPost]
+        public string AddNewCar()
+        {
+            return " ";
+        }
+
+        [HttpGet]
+        public string ShowCars()
+        {
+            return JsonConvert.SerializeObject(parking.Cars);
+        }
+
+
+        [Route("api/parking/addcar/{id}&{balance}")]
+        [HttpPut]
+        public ActionResult AddCar(int balance,int id)
+        {
+            parking.Cars[id].RechargeBalance(balance);
+            return NoContent();
+        }
     }
 }

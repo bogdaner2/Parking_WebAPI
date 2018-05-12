@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<ArrayOfCar xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Car>
-    <Id>20112485-0f2f-40c7-a2af-8a2b17ee8c34</Id>
-    <CarBalance>980</CarBalance>
-    <TypeOfTransport>Truck</TypeOfTransport>
-  </Car>
-</ArrayOfCar>

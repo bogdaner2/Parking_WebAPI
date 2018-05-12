@@ -2,16 +2,17 @@
 
 namespace Parking.Data
 {
-    [Serializable]
-    public class Car 
+    public class Car
     {
-        public Guid Id { get; set; }
+        private static int counter;
+        public int Id { get; set; }
         public double CarBalance { get; set; }
         public CarType TypeOfTransport { get; set; }
 
         public Car(int balance,CarType type)
         {
-            Id = Guid.NewGuid();
+            Id = counter;
+            counter++;
             CarBalance = balance;
             TypeOfTransport = type;
         }

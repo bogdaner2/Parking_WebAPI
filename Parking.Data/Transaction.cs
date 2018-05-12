@@ -5,10 +5,10 @@ namespace Parking.Data
     public class Transaction
     {
         public DateTime Time { get; }
-        public Guid Id { get; }
+        public int Id { get; }
         public double Fee { get; }
 
-        public Transaction(Guid id,double fee)
+        public Transaction(int id,double fee)
         {
             Time = DateTime.Now;
             Id = id;
