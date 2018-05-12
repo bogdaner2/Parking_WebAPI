@@ -1,4 +1,6 @@
 ﻿using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Parking.Data
 {
@@ -7,7 +9,8 @@ namespace Parking.Data
         private static int counter;
         public int Id { get; set; }
         public double CarBalance { get; set; }
-        public CarType TypeOfTransport { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public CarType TypeOfTransport { get ; set; }
 
         public Car(int balance,CarType type)
         {
@@ -30,7 +33,6 @@ namespace Parking.Data
         public void RechargeBalance(int count)
         {
             CarBalance += count;
-            Console.WriteLine("Current balance : {0}",CarBalance);
         }
 
         public void Withdraw(double count)

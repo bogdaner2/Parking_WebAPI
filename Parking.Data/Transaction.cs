@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Parking.Data
 {
@@ -19,5 +20,8 @@ namespace Parking.Data
         {
             return string.Format($"Car Id:{Id.ToString().Substring(Id.ToString().Length - 5)} | Paid {Fee} $ at {Time}");
         }
+
+        public static List<Transaction> TransactionsForCurtainCar(int id,Parking parking) =>
+             parking.Transactions.FindAll(x => x.Id == id);
     }
 }
