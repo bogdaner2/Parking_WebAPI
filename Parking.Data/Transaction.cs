@@ -16,11 +16,6 @@ namespace Parking.Data
             Fee = fee;
         }
 
-        public override string ToString()
-        {
-            return string.Format($"Car Id:{Id.ToString().Substring(Id.ToString().Length - 5)} | Paid {Fee} $ at {Time}");
-        }
-
         public static List<Transaction> TransactionsForCurtainCar(int id,Parking parking) =>
              parking.Transactions.FindAll(x => x.Id == id);
     }

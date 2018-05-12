@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Parking.Data;
 
@@ -17,21 +14,21 @@ namespace Parking_WebAPI.Controllers
 
         public string Info()
         {
-            return "|GET|  Show cars      : \"/api/parking/showcars\" \n" +  //
-                   "|GET|  Show car by id : \"/api/parking/showcars/{id}\" \n" + //
-                   "|GET|  Show free spots : \"/api/parking/showcars/{id}\" \n" + //
-                   "|GET|  Show occupied spots : \"/api/parking/showcars/{id}\" \n" + //
-                   "|GET|  Show transaction history for the last minute\n" +
-                   "|GET|  Show transaction history for the last minute for certain car\n" + //
-                   "|GET|  Show Transcations.log :\n" + //
-                   "|GET|  Show parking balance :\n" + //
-                   "|POST| Add car        : \"/api/parking/showcars/{id}\"\n" +
-                   "|PUT|  Recharge car balance\n" +
-                   "|DELETE| Remove car ";
+            return "|GET|  Show cars      : \"/api/parking/cars\" \n" +  
+                   "|GET|  Show car by id : \"/api/parking/cars/{id}\" \n" + 
+                   "|GET|  Show free spots : \"/api/parking/freespots\" \n" + 
+                   "|GET|  Show occupied spots : \"/api/parking/occupiedspots\" \n" +
+                   "|GET|  Show transaction history for the last minute : /api/parking/last_minute_transactions\n" +
+                   "|GET|  Show transaction history for the last minute for certain car : \"/api/parking/car_transactions\"\n" + 
+                   "|GET|  Show Transcations.log : \"/api/parking/log\"\n" +
+                   "|GET|  Show parking balance : \"/api/parking/balance\"\n" + 
+                   "|POST| Add car        : \"/api/parking/add_car/{type}&{balance:int}\"\n" +
+                   "|PUT|  Recharge car balance : \"/api/parking/recharge_balance/{id}&{balance:int}\"\n" +
+                   "|DELETE| Remove car : \"/api/parking/remove_car/{id}\"";
         }
 
         [HttpGet("[action]")]
-        public async Task<string> ShowBalance() => 
+        public async Task<string> Balance() => 
             await Task.Run(() => JsonConvert.SerializeObject(parking.Balance));
 
         [HttpGet("[action]")]
@@ -39,7 +36,7 @@ namespace Parking_WebAPI.Controllers
             await Task.Run(() => JsonConvert.SerializeObject(parking.ShowFreeSpots()));
 
         [HttpGet("[action]/{id}")]
-        public async Task<string> ShowTransactionsForCar(int id) =>
+        public async Task<string> Car_Transactions(int id) =>
             await Task.Run(() => JsonConvert.SerializeObject(Transaction.TransactionsForCurtainCar(id,parking)));
 
         [HttpGet("[action]")]
@@ -47,11 +44,11 @@ namespace Parking_WebAPI.Controllers
             await Task.Run(() => JsonConvert.SerializeObject(parking.ShowOccupiedSpots()));
 
         [HttpGet("[action]")]
-        public async Task<string> ShowCars() =>
+        public async Task<string> Cars() =>
             await Task.Run(() => JsonConvert.SerializeObject(parking.Cars));
 
         [HttpGet("[action]")]
-        public async Task<string> ShowLog()
+        public async Task<string> Log()
         {
             try
             {
@@ -63,29 +60,31 @@ namespace Parking_WebAPI.Controllers
             catch (Exception e) { return await Task.Run(()=>"File doesnt exist right now.Please,Wait for the first transaction"); }
         }
 
+        [HttpGet("[action]")]
+        public async Task<string> Last_Minute_Transactions() =>
+            await Task.Run(() => JsonConvert.SerializeObject(parking.Transactions));
+
+
         [HttpGet("[action]/{id}")]
-        public async Task<string> ShowCars(int id) =>
+        public async Task<string> Cars(int id) =>
             await Task.Run(() => JsonConvert.SerializeObject(parking.Cars[id]));
 
-        [Route("[action]/{id}&{balance}")]
-        [HttpPut]
-        public async Task<string> RechargeBalance(int id, int balance)
+        [HttpPut("[action]/{id}&{balance}")]
+        public async Task<string> Recharge_Balance(int id, int balance)
         {
             var car = parking.Cars[id-1];
             car.RechargeBalance(balance);
             return await Task.Run(() => "Car id:" + car.Id + "balance = " + car.CarBalance);
         }
-        [Route("[action]/{type}&{balance}")]
-        [HttpPost]
-        public async Task<string> AddCar(int balance,int type)
+        [HttpPost("[action]/{type}&{balance}")]
+        public async Task<string> Add_Car(int balance,int type)
         {
             var car = new Car(balance, (Car.CarType) type);
             parking.Cars.Add(car);
             return await Task.Run(() => "Car id:" + car.Id + " was added");
         }
-        [Route("[action]/{id}")]
-        [HttpDelete]
-        public async Task<string> RemoveCar(int id)
+        [HttpDelete("[action]/{id}")]
+        public async Task<string> Remove_Car(int id)
         {
             var car = parking.Cars[id-1];
             parking.Cars.RemoveAll(x=> x.Id == id);
