@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +23,7 @@ namespace Parking_WebAPI.Controllers
                    "|GET|  Show occupied spots : \"/api/parking/showcars/{id}\" \n" + //
                    "|GET|  Show transaction history for the last minute\n" +
                    "|GET|  Show transaction history for the last minute for certain car\n" + //
-                   "|GET|  Show Transcations.log :\n" +
+                   "|GET|  Show Transcations.log :\n" + //
                    "|GET|  Show parking balance :\n" + //
                    "|POST| Add car        : \"/api/parking/showcars/{id}\"\n" +
                    "|PUT|  Recharge car balance\n" +
@@ -48,6 +50,19 @@ namespace Parking_WebAPI.Controllers
         public async Task<string> ShowCars() =>
             await Task.Run(() => JsonConvert.SerializeObject(parking.Cars));
 
+        [HttpGet("[action]")]
+        public async Task<string> ShowLog()
+        {
+            try
+            {
+                using (StreamReader stream = new StreamReader("Transactions.log"))
+                {
+                    return await stream.ReadToEndAsync();
+                }
+            }
+            catch (Exception e) { throw new Exception("File doesnt exist right now.Please,Wait for the first transaction"); }
+        }
+
         [HttpGet("[action]/{id}")]
         public async Task<string> ShowCars(int id)
         {
@@ -58,24 +73,27 @@ namespace Parking_WebAPI.Controllers
 
         [Route("[action]/{id}&{balance}")]
         [HttpPut]
-        public string RechargeBalance(int balance,int id)
+        public async Task<string> RechargeBalance(int id, int balance)
         {
-            parking.Cars[id].RechargeBalance(balance);
-            return "Car Added";
+            var car = parking.Cars[id];
+            car.RechargeBalance(balance);
+            return await Task.Run(() => "Car id:" + car.Id + "balance = " + car.CarBalance);
         }
-        [Route("[action]/{id}&{balance}")]
+        [Route("[action]/{type}&{balance}")]
         [HttpPost]
-        public string AddCar(int balance, int id)
+        public async Task<string> AddCar(int balance,int type)
         {
-            parking.Cars[id].RechargeBalance(balance);
-            return "Car Added";
+            var car = new Car(balance, (Car.CarType) type);
+            parking.Cars.Add(car);
+            return await Task.Run(() => "Car id:" + car.Id + " was added");
         }
-        [Route("[action]/{id}&{balance}")]
+        [Route("[action]/{id}")]
         [HttpDelete]
-        public string RemoveCar(int balance, int id)
+        public async Task<string> RemoveCar(int id)
         {
-            parking.Cars[id].RechargeBalance(balance);
-            return "Car Added";
+            var car = parking.Cars[id];
+            parking.Cars.Remove(car);
+            return await Task.Run(() => "Car id:" + car.Id + "was removed");
         }
     }
 }
