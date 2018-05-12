@@ -23,10 +23,6 @@ namespace Parking.Data
             OnAddTransaction += Refresh;
             Balance = 0;
             Settings = Settings.Instance;
-            Cars.Add(new Car(100, Car.CarType.Motorcycle));
-            Cars.Add(new Car(100, Car.CarType.Motorcycle));
-            Cars.Add(new Car(100, Car.CarType.Motorcycle));
-            Cars.Add(new Car(100, Car.CarType.Motorcycle));
         }
 
         public void AddTransaction(int id , double fee)

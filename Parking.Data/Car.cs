@@ -5,7 +5,7 @@ namespace Parking.Data
 {
     public class Car
     {
-        private static int counter = 1;
+        //private static int counter = 1;
         public int Id { get; set; }
         public double CarBalance { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
@@ -13,8 +13,8 @@ namespace Parking.Data
 
         public Car(int balance,CarType type)
         {
-            Id = counter;
-            counter++;
+            //Id = counter;
+            //counter++;
             CarBalance = balance;
             TypeOfTransport = type;
         }

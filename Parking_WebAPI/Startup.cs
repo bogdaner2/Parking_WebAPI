@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Parking.Data;
+using Parking_WebAPI.Models;
 
 namespace Parking_WebAPI
 {
@@ -32,6 +34,14 @@ namespace Parking_WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            using (var context = new CarContext())
+            {
+                context.Database.EnsureCreated();
+                context.Cars.Add(new Car(100, Car.CarType.Motorcycle));
+                context.SaveChanges();
+            }
+
+
             services.AddMvc();
         }
 

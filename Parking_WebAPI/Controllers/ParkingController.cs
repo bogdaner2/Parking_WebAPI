@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Parking.Data;
+using Parking_WebAPI.Models;
 
 namespace Parking_WebAPI.Controllers
 {
@@ -44,9 +45,13 @@ namespace Parking_WebAPI.Controllers
             await Task.Run(() => JsonConvert.SerializeObject(parking.ShowOccupiedSpots()));
 
         [HttpGet("[action]")]
-        public async Task<string> Cars() =>
-            await Task.Run(() => JsonConvert.SerializeObject(parking.Cars));
-
+        public async Task<string> Cars()
+        {
+            using (var db = new CarContext())
+            {
+                return await Task.Run(() => JsonConvert.SerializeObject(db.Cars));
+            }
+        }
         [HttpGet("[action]")]
         public async Task<string> Log()
         {
