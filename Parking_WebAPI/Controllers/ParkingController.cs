@@ -60,22 +60,18 @@ namespace Parking_WebAPI.Controllers
                     return await stream.ReadToEndAsync();
                 }
             }
-            catch (Exception e) { throw new Exception("File doesnt exist right now.Please,Wait for the first transaction"); }
+            catch (Exception e) { return await Task.Run(()=>"File doesnt exist right now.Please,Wait for the first transaction"); }
         }
 
         [HttpGet("[action]/{id}")]
-        public async Task<string> ShowCars(int id)
-        {
-                var car = parking.Cars[id];
-                return await Task.Run(() => JsonConvert.SerializeObject(car));
-        }
-
+        public async Task<string> ShowCars(int id) =>
+            await Task.Run(() => JsonConvert.SerializeObject(parking.Cars[id]));
 
         [Route("[action]/{id}&{balance}")]
         [HttpPut]
         public async Task<string> RechargeBalance(int id, int balance)
         {
-            var car = parking.Cars[id];
+            var car = parking.Cars[id-1];
             car.RechargeBalance(balance);
             return await Task.Run(() => "Car id:" + car.Id + "balance = " + car.CarBalance);
         }
@@ -91,8 +87,8 @@ namespace Parking_WebAPI.Controllers
         [HttpDelete]
         public async Task<string> RemoveCar(int id)
         {
-            var car = parking.Cars[id];
-            parking.Cars.Remove(car);
+            var car = parking.Cars[id-1];
+            parking.Cars.RemoveAll(x=> x.Id == id);
             return await Task.Run(() => "Car id:" + car.Id + "was removed");
         }
     }

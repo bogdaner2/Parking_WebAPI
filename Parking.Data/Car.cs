@@ -6,7 +6,7 @@ namespace Parking.Data
 {
     public class Car
     {
-        private static int counter;
+        private static int counter = 1;
         public int Id { get; set; }
         public double CarBalance { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]

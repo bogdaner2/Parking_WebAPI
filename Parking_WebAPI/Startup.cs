@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Threading;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +12,19 @@ namespace Parking_WebAPI
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            
+            var parking = Parking.Data.Parking.Instance;
+            var earnedPerMinute = 0.0;
+            var firstTick = true;
+            var timerLog = new Timer(
+                e => parking.Log(ref earnedPerMinute, ref firstTick),
+                null,
+                TimeSpan.Zero,
+                TimeSpan.FromMinutes(1));
+            var timerCharge = new Timer(
+                e => parking.ChargeAFee(parking, ref earnedPerMinute),
+                null,
+                TimeSpan.Zero,
+                TimeSpan.FromSeconds(parking.Settings.Timeout));
         }
 
         public IConfiguration Configuration { get; }
