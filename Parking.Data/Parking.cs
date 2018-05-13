@@ -83,6 +83,7 @@ namespace Parking.Data
         public async Task<string> AddCar(int balance, int type)
         {
             if (type < 1 || type > 4) { return await Task.Run(() => "Please, input right type"); }
+            if (Cars.Count == Settings.ParkingPlace) { return await Task.Run(() => "No such car"); }
             var car = new Car(balance, (Car.CarType)type);
             Cars.Add(car);
             Cars = Cars.OrderBy(c => c.Id).ToList();
@@ -93,6 +94,7 @@ namespace Parking.Data
         {
             var car = Cars.Find(x => x.Id == id);
             if (car == null) { return await Task.Run(() => "No such car"); }
+            if (car.CarBalance < 0) { return await Task.Run(() => "Please,recharge balance and try again"); }
             Cars.Remove(car);
             WriteJson();
             return await Task.Run(() => "Car was removed");
