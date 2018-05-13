@@ -1,11 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using System.Linq;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Parking.Data
 {
     public class Car
     {
-        private static int counter = 1;
         public int Id { get; set; }
         public double CarBalance { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
@@ -13,13 +13,10 @@ namespace Parking.Data
 
         public Car(int balance,CarType type)
         {
-            Id = counter;
-            counter++;
+            Id = GetUniqueId();
             CarBalance = balance;
             TypeOfTransport = type;
         }
-
-        public Car() { }
 
         public enum CarType
         {
@@ -27,6 +24,23 @@ namespace Parking.Data
             Truck,
             Bus,
             Motorcycle
+        }
+
+        private static int GetUniqueId()
+        {
+            //Provide distinct values of Id when you add new car after removing previous
+            var cars = Parking.Instance.Cars;
+            var min = 1;
+            var max = Parking.Instance.Settings.ParkingPlace + 1;
+            var nums = Enumerable.Range(min,max);
+            foreach (var num in nums)
+            {
+                if (cars.Find(x => x.Id == num) == null)
+                {
+                    return num;
+                }
+            }
+            return 0;
         }
 
         public void RechargeBalance(int count)
@@ -37,12 +51,6 @@ namespace Parking.Data
         public void Withdraw(double count)
         {
             CarBalance -= count;
-        }
-
-        public override string ToString()
-        {
-            string id = Id.ToString().Substring(Id.ToString().Length - 5);
-            return string.Format($"Id:{id} Balance:{CarBalance} Type {TypeOfTransport}");
         }
     }
 }

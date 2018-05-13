@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Parking.Data;
 
 namespace Parking_WebAPI
 {
@@ -13,6 +14,7 @@ namespace Parking_WebAPI
         {
             Configuration = configuration;
             var parking = Parking.Data.Parking.Instance;
+            parking.LoadCars();
             var earnedPerMinute = 0.0;
             var firstTick = true;
             var timerLog = new Timer(

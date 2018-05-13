@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Parking.Data
 {
@@ -23,10 +26,6 @@ namespace Parking.Data
             OnAddTransaction += Refresh;
             Balance = 0;
             Settings = Settings.Instance;
-            Cars.Add(new Car(100, Car.CarType.Motorcycle));
-            Cars.Add(new Car(100, Car.CarType.Motorcycle));
-            Cars.Add(new Car(100, Car.CarType.Motorcycle));
-            Cars.Add(new Car(100, Car.CarType.Motorcycle));
         }
 
         public void AddTransaction(int id , double fee)
@@ -74,8 +73,61 @@ namespace Parking.Data
             }
             firstTick = false;
         }
-
+        public void LoadCars()
+        {
+            using (StreamReader file = new StreamReader("Cars.json"))
+            {
+                Cars = JsonConvert.DeserializeObject<List<Car>>(file.ReadToEnd());
+            }
+        }
+        public async Task<string> AddCar(int balance, int type)
+        {
+            if (type < 1 || type > 4) { return await Task.Run(() => "Please, input right type"); }
+            var car = new Car(balance, (Car.CarType)type);
+            Cars.Add(car);
+            Cars = Cars.OrderBy(c => c.Id).ToList();
+            WriteJson();
+            return await Task.Run(() => "Car id:" + car.Id + " was added");
+        }
+        public async Task<string> RemoveCar(int id)
+        {
+            var car = Cars.Find(x => x.Id == id);
+            if (car == null) { return await Task.Run(() => "No such car"); }
+            Cars.Remove(car);
+            WriteJson();
+            return await Task.Run(() => "Car was removed");
+        }
+        public async Task<string> RechargeBalance(int id, int balance)
+        {
+            var car = Cars.Find(x => x.Id == id);
+            if (car == null)
+            {
+                return await Task.Run(() => "There no such car");
+            }
+            car.RechargeBalance(balance);
+            WriteJson();
+            return await Task.Run(() => "Car id:" + car.Id + "balance = " + car.CarBalance);
+        }
+        public async Task<string> ShowLog()
+        {
+            try
+            {
+                using (StreamReader stream = new StreamReader("Transactions.log"))
+                {
+                    return await stream.ReadToEndAsync();
+                }
+            }
+            catch (Exception) { return await Task.Run(()=>"File doesnt exist right now.Please,Wait for the first transaction"); }
+        }
         public int ShowFreeSpots() => Settings.ParkingPlace - Cars.Count;
         public int ShowOccupiedSpots() => Cars.Count;
+        private void WriteJson()
+        {
+            using (StreamWriter file = new StreamWriter("Cars.json"))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, Cars);
+            }
+        }
     }
 }
