@@ -47,7 +47,9 @@ namespace Parking_WebAPI
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute("default", "api/{controller=Parking}/{action=Info}/{id?}");
+                routes.MapRoute("parking", "api/{controller=Parking}/{action=Info}/{id?}");
+                routes.MapRoute("cars", "api/{controller=Car}/{action=Cars}/{id?}");
+                routes.MapRoute("transaction", "api/{controller=Transaction}/{action=Log}/{id?}");
             });
         }
     }

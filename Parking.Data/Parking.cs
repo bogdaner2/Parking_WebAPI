@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -88,7 +89,7 @@ namespace Parking.Data
             Cars.Add(car);
             Cars = Cars.OrderBy(c => c.Id).ToList();
             WriteJson();
-            return await Task.Run(() => "Car id:" + car.Id + " was added");
+            return await Task.FromResult("Car id:" + car.Id + " was added");
         }
         public async Task<string> RemoveCar(int id)
         {
